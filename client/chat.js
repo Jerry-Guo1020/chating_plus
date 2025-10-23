@@ -11,7 +11,7 @@ function initUser() {
 initUser();
 
 // 对发送信息的操作
-const messages = document.getElementById('messages');
+const messages = document.getElementById('message'); // 修正为与HTML中一致的ID
 const input = document.getElementById('input');
 const sendBtn = document.getElementById('sendBtn');
 const userCount = document.getElementById('userCount');
@@ -66,10 +66,10 @@ sendBtn.onclick = sendMessage;
 
 // 使用enter发送消息
 input.addEventListener("keyup", function(event) {
-    if(event.kry === "Enter") {
+    if(event.key === "Enter") {
         // 获取输入框的文本
         sendMessage();
-        console.log(`${username}发的消息是`, messages);
+        console.log(`${username}发的消息是`, input.value);
     }
 })
 
@@ -84,9 +84,14 @@ socket.on('chat message', (msg) => {
     addMessage({
         // 使用展开运算符将msg对象的所有属性复制到新的对象当中
         ...msg,
-        self: messages.selfID === selfID,
-        system: false
+        self: msg.id === selfID,
+        system: msg.system || false
     });
+});
+
+// 添加用户计数更新处理
+socket.on('user count', (count) => {
+    userCount.textContent = `当前在线：${count}人`;
 });
 
 // 断开连接的重新处理

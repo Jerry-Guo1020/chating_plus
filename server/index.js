@@ -1,15 +1,16 @@
-const express = require('express')
+const express = require('express');
+
 //这一步是：引入node.js的http模块，这个的作用是为了能够创建http服务器和客户端的功能
-const http = require('http')
+const http = require('http');
 
-const { Server } = require("socket.io")
-const { join } = require('node.path')
-const { log } = require('console')
+const { Server } = require("socket.io");
+const { join } = require('node.path');
+const { log } = require('console');
 
-const app = express()
-const server = http.createServer(app)
-const io = new Server(server)
-const port = 3000
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+const port = 3000;
 
 // app.use()这个作用是访问请求对象、响应对象和对于应用程序的请求的一个中间件函数，
 // 他可以
@@ -41,9 +42,19 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log("有一位用户退出了", socket.id);
     });
+
+    socket.on('join', (username) => {
+        // 保存用户信息
+        users.set(socket.id, {
+            id: socket.id,
+            username: username
+        });
+
+        
+    })
     
     socket.on("chat message", (msg) => {
         console.log("message", + msg, socket.id);
-        io.emit("chat message", msg)
-    })
-})
+        io.emit("chat message", msg);
+    });
+});
