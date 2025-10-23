@@ -52,3 +52,58 @@ function addMessage({ text, username, time, self = false, system = false}) {
     // 这个的作用就是：当我有新消息出现时候我能够自动滑动窗户看得到最新消息
     messages.scrollTop = messages.scrollHeight;
 }
+
+//发送消息的输入框
+function sendMessage() {
+    const text = input.value.trim();
+    if(!text) return;
+    socket.emit('chat message', { text });
+    input.value = '';
+}
+
+// 点击发送按钮
+sendBtn.onclick = sendMessage;
+
+// 使用enter发送消息
+input.addEventListener("keyup", function(event) {
+    if(event.kry === "Enter") {
+        // 获取输入框的文本
+        sendMessage();
+        console.log(`${username}发的消息是`, messages);
+    }
+})
+
+// socket事件
+
+// 1、当客户端成功连接到服务器进入聊天室的时候会有一个joined的事件传到客户端
+socket.on('joined', (data) => {
+    selfID = data.id;
+})
+
+socket.on('chat message', (msg) => {
+    addMessage({
+        // 使用展开运算符将msg对象的所有属性复制到新的对象当中
+        ...msg,
+        self: messages.selfID === selfID,
+        system: false
+    });
+});
+
+// 断开连接的重新处理
+socket.on('disconnect', () => {
+    addMessage({
+        text: "与服务器断开连接，正在尝试重新连接…",
+        time: Date.now(),
+        system: true
+    });
+});
+
+socket.on('connect', () => {
+    addMessage({
+        text:"成功重新连上服务器，欢迎使用！",
+        time: Date.now(),
+        system: true
+    });
+    
+    socket.emit('join', username);
+});
