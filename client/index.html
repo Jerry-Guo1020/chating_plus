@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>哈哈哈聊天室</h2>
+            <span id="userCount">当前在线：0人</span>
+        </div>
+
+        <div class="chat-messages" id="message"></div>
+
+        <div class="input">
+            <input id="input" placeholder="请输入信息" autocomplete="off" />
+            <button id="sendBtn">发送</button>
+        </div>
+    </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    if (typeof io === 'undefined') {
+        console.error("socket.io没有正确加载，请检查网络连接");
+    }
+</script>
+<script src="chat.js"></script>
+</html>
